@@ -5,43 +5,64 @@ from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
 from PIL import Image
 import time
-import glob
 import paho.mqtt.client as paho
 import json
-from gtts import gTTS
-from googletrans import Translator
 
-def on_publish(client,userdata,result):             #create function for callback
-    print("el dato ha sido publicado \n")
+def on_publish(client, userdata, result):
+    print("El dato ha sido publicado \n")
     pass
 
 def on_message(client, userdata, message):
     global message_received
     time.sleep(2)
-    message_received=str(message.payload.decode("utf-8"))
+    message_received = str(message.payload.decode("utf-8"))
     st.write(message_received)
 
-broker="broker.mqttdashboard.com"
-port=1883
-client1= paho.Client("GIT-Yoru")
+broker = "broker.mqttdashboard.com"
+port = 1883
+client1 = paho.Client("GIT-Yoru")
 client1.on_message = on_message
 
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Lexend:wght@600&display=swap');
+    
+    .title-font {
+        font-family: 'Lexend', sans-serif;
+        font-size: 36px;
+        text-align: center;
+    }
 
+    .subtitle-font {
+        font-family: 'Inter', sans-serif;
+        font-size: 24px;
+        text-align: center;
+    }
 
-st.title("Interfaces Multimodales")
-st.subheader("CONTROL POR VOZ")
+    .paragraph-font {
+        font-family: 'Inter', sans-serif;
+        font-size: 18px;
+        text-align: justify;
+    }
+    
+    .center-img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown('<p class="title-font">Interfaces Multimodales</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle-font">CONTROL POR VOZ</p>', unsafe_allow_html=True)
 
 image = Image.open('Yoru - Voz.png')
+st.markdown('<img src="data:image/png;base64,{}" class="center-img" width="200"/>'.format(st.image(image, use_column_width=False)), unsafe_allow_html=True)
 
-st.image(image, width=200)
-
-
-
-
-st.write("Toca el Botón y habla ")
+st.write("Toca el Botón y habla")
 
 stt_button = Button(label=" Inicio ", width=200)
-
 stt_button.js_on_event("button_click", CustomJS(code="""
     var recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
@@ -72,13 +93,12 @@ result = streamlit_bokeh_events(
 if result:
     if "GET_TEXT" in result:
         st.write(result.get("GET_TEXT"))
-        client1.on_publish = on_publish                            
-        client1.connect(broker,port)  
-        message =json.dumps({"Act1":result.get("GET_TEXT").strip()})
-        ret= client1.publish("voice_ctrl_1", message)
+        client1.on_publish = on_publish
+        client1.connect(broker, port)
+        message = json.dumps({"Act1": result.get("GET_TEXT").strip()})
+        ret = client1.publish("voice_ctrl_1", message)
 
-    
-    try:
-        os.mkdir("temp")
-    except:
-        pass
+try:
+    os.mkdir("temp")
+except:
+    pass
