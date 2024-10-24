@@ -49,6 +49,7 @@ st.markdown("""
         display: block;
         margin-left: auto;
         margin-right: auto;
+        width: 200px; /* Fija el tamaño de la imagen */
     }
     
     </style>
@@ -58,7 +59,7 @@ st.markdown('<p class="title-font">Interfaces Multimodales</p>', unsafe_allow_ht
 st.markdown('<p class="subtitle-font">CONTROL POR VOZ</p>', unsafe_allow_html=True)
 
 image = Image.open('Yoru - Voz.png')
-st.markdown('<img src="data:image/png;base64,{}" class="center-img" width="200"/>'.format(st.image(image, use_column_width=False)), unsafe_allow_html=True)
+st.markdown(f'<img src="data:image/png;base64,{st.image(image, use_column_width=False)}" class="center-img"/>', unsafe_allow_html=True)
 
 st.write("Toca el Botón y habla")
 
