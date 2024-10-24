@@ -94,20 +94,12 @@ result = streamlit_bokeh_events(
 
 # Publicar el mensaje de voz recibido a través de MQTT
 if result:
-    command = result.get("GET_TEXT").strip().lower()
-    st.write(command)
-    
-    if command == "izquierda":
-        message = json.dumps({"Act1": "move_left"})  # Movimiento a la izquierda
-    elif command == "derecha":
-        message = json.dumps({"Act1": "move_right"})  # Movimiento a la derecha
-    else:
-        message = json.dumps({"Act1": command})
-    
-    client1.on_publish = on_publish
-    client1.connect(broker, port)
-    ret = client1.publish("voice_ctrl_1", message)
-
+    if "GET_TEXT" in result:
+        st.write(result.get("GET_TEXT"))
+        client1.on_publish = on_publish
+        client1.connect(broker, port)
+        message = json.dumps({"Act1": result.get("GET_TEXT").strip()})
+        ret = client1.publish("voice_ctrl_1", message)
 
 # Crear el directorio temporal si no existe
 try:
